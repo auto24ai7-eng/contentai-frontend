@@ -297,7 +297,7 @@ button{cursor:pointer;font-family:inherit;transition:all .15s}input,textarea,sel
 
 <script>
 const API='https://contentai-backend-production-44cc.up.railway.app';
-const GOOGLE_CLIENT_ID='355859233983-6dv30p1331vd5dur5ctk69oveus7lakb.apps.googleusercontent.com'; // Add your Google Client ID here
+const GOOGLE_CLIENT_ID='355859233983-6dv30p1331vd5dur5ctk69oveus7lakb.apps.googleusercontent.com';
 
 const PLATS=[
  {id:'instagram',label:'Instagram'},{id:'tiktok',label:'TikTok'},{id:'youtube',label:'YouTube'},
@@ -461,7 +461,7 @@ function rMediaZone(){
   const preview=S.mediaType==='video'?'<video src="'+S.mediaPreview+'" class="map-thumb" style="width:auto;height:48px" controls></video>':'<img src="'+S.mediaPreview+'" class="map-thumb"/>';
   return '<div class="media-attach-preview">'+preview+'<span class="map-lbl">'+esc(S.mediaFile?.name||'Media attached')+'</span><button class="map-rm" id="media-rm">Remove</button></div>';
  }
- return '<div class="media-zone" id="media-zone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)"><div class="media-zone-inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Click or drag to attach a photo or video to your post</span></div></div>';
+ return '<div class="media-zone" id="media-zone"><div class="media-zone-inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Click or drag to attach a photo or video to your post</span></div></div>';
 }
 
 function rMultiResults(){
@@ -560,7 +560,13 @@ function wire(){
  const shb=document.getElementById('sched-btn');if(shb)shb.addEventListener('click',()=>{const pid=S.activeResultTab||S.selectedPlats[0];const t=S.multiResults[pid];if(t){const days=wkDays(S.calOff);const k=dk(days[0]);const ev=Object.assign({},S.calEvts);ev[k]=(ev[k]||[]).concat({text:'['+((PLATS.find(p=>p.id===pid)||{label:pid}).label)+'] '+t});S.calEvts=ev;toast('Added to calendar!','ok');}});
  document.querySelectorAll('[data-rt]').forEach(b=>b.addEventListener('click',()=>{S.activeResultTab=b.dataset.rt;renderPage();}));
  document.querySelectorAll('[data-ref]').forEach(b=>b.addEventListener('click',()=>doRefine(b.dataset.ref)));
- const mz=document.getElementById('media-zone');if(mz)mz.addEventListener('click',()=>document.getElementById('media-file-input').click());
+ const mz=document.getElementById('media-zone');
+ if(mz){
+  mz.addEventListener('click',()=>document.getElementById('media-file-input').click());
+  mz.addEventListener('dragover',e=>{e.preventDefault();mz.classList.add('drag');});
+  mz.addEventListener('dragleave',()=>mz.classList.remove('drag'));
+  mz.addEventListener('drop',handleDrop);
+ }
  const mr=document.getElementById('media-rm');if(mr)mr.addEventListener('click',()=>{S.mediaFile=null;S.mediaPreview=null;S.mediaType=null;renderPage();});
  document.getElementById('media-file-input').onchange=function(e){handleMediaFile(e.target.files[0]);};
  // quick schedule
