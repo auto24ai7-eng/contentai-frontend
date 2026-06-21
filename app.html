@@ -391,13 +391,13 @@ function initGoogleSSO(){
   client_id:GOOGLE_CLIENT_ID,
   callback:async function(resp){
    try{
-    const res=await fetch(API+'/auth/google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:resp.credential})});
+    const res=await fetch(API+'/auth/google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential})});
     const d=await res.json();
     if(!res.ok){const err=document.getElementById('aerr');err.textContent=d.error||'Google sign-in failed.';err.style.display='block';return;}
     S.token=d.token;S.user=d.user;
     document.getElementById('auth-ov').style.display='none';
     renderApp();
-   }catch{toast('Google sign-in failed. Try email login.');}
+   }catch(e){toast('Google sign-in failed: '+e.message);}
   }
  });
 }
